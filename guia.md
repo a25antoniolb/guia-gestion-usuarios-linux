@@ -11,12 +11,13 @@ Guía práctica para administrar las cuentas de usuario de un sistema Linux: cre
   - [4.1. Consultar el estado inicial](#41-consultar-el-estado-inicial)
   - [4.2. Crear un usuario](#42-crear-un-usuario)
   - [4.3. Establecer la contraseña](#43-establecer-la-contraseña)
-  - [4.4. Añadir el usuario a grupos](#44-añadir-el-usuario-a-grupos)
-  - [4.5. Crear una cuenta de servicio](#45-crear-una-cuenta-de-servicio)
-  - [4.6. Fijar la caducidad y cambiar el directorio personal](#46-fijar-la-caducidad-y-cambiar-el-directorio-personal)
-  - [4.7. Configuración de límites globales en /etc/login.defs](#47-configuración-de-límites-globales-en-etclogindefs)
-  - [4.8. Comprobar y bloquear la cuenta](#48-comprobar-y-bloquear-la-cuenta)
-  - [4.9. Eliminar la cuenta](#49-eliminar-la-cuenta)
+  - [4.4. Gestión avanzada del estado de contraseñas](#44-gestión-avanzada-del-estado-de-contraseñas)
+  - [4.5. Añadir el usuario a grupos](#45-añadir-el-usuario-a-grupos)
+  - [4.6. Crear una cuenta de servicio](#46-crear-una-cuenta-de-servicio)
+  - [4.7. Fijar la caducidad y cambiar el directorio personal](#47-fijar-la-caducidad-y-cambiar-el-directorio-personal)
+  - [4.8. Configuración de límites globales en /etc/login.defs](#48-configuración-de-límites-globales-en-etclogindefs)
+  - [4.9. Comprobar y bloquear la cuenta](#49-comprobar-y-bloquear-la-cuenta)
+  - [4.10. Eliminar la cuenta](#410-eliminar-la-cuenta)
 - [5. Comprobación final](#5-comprobación-final)
 - [6. Resolución de problemas](#6-resolución-de-problemas)
 - [7. Resumen de comandos](#7-resumen-de-comandos)
@@ -155,7 +156,19 @@ sudo chage -l pedro
 
 Fíjate en que `passwd` no muestra nada mientras escribes: es lo normal, evita que alguien vea tu contraseña por encima del hombro. Y **no** uses `passwd pedro MiContrasena`, porque quedaría guardada en el historial de comandos.
 
-### 4.4. Añadir el usuario a grupos
+### 4.4. Gestión avanzada del estado de contraseñas
+
+El comando `passwd` incluye modificadores esenciales para gestionar el estado operativo de las claves sin necesidad de esperar a que venza su caducidad global:
+
+- **Forzar cambio en el próximo inicio de sesión (`sudo passwd -e pedro`)**: Si das de alta a un compañero y le asignas una clave temporal, puedes obligarle a cambiarla inmediatamente al entrar por primera vez.
+
+- **Consultar el estatus de la clave (`sudo passwd -S pedro`)**: Muestra información rápida sobre el estado de la cuenta (si está bloqueada con una `L`, activa con una `P`, o no tiene clave con `NP`).
+
+- **Eliminar la contraseña (`sudo passwd -d pedro`)**: Deja la cuenta sin contraseña. Esto hace que la cuenta sea accesible sin clave, lo cual es útil para pruebas controladas pero altamente inseguro en producción.
+
+> **Aviso de seguridad**: Al usar `passwd -e`, el sistema cambia la fecha del último cambio de contraseña a `0` en `/etc/shadow`. Esto bloquea el acceso interactivo normal hasta que el usuario complete el proceso de actualización en el prompt de la terminal.
+
+### 4.5. Añadir el usuario a grupos
 
 En Linux los permisos no se dan por usuario, sino por **grupo**. `pedro` ya pertenece a su propio grupo; ahora la añadimos al grupo `soporte`:
 
@@ -176,7 +189,7 @@ grep soporte /etc/group
 
 > **La opción `-aG` no es opcional.** `usermod -G soporte pedro` (sin la `a`) **borra** todos los demás grupos del usuario, y es posible que te quedes sin acceso a `sudo` o a tus propios archivos. Es el error más común al administrar usuarios: si la cuenta con la que estás trabajando deja de poder usar `sudo`, casi siempre la causa es un `-G` sin `-a`.
 
-### 4.5. Crear una cuenta de servicio
+### 4.6. Crear una cuenta de servicio
 
 No todos los usuarios son personas. Los servicios (un servidor web, una base de datos) también necesitan una cuenta propia, pero **no deben poder iniciar sesión**. Para eso se usa `-r` y un shell de bloqueo:
 
@@ -189,7 +202,7 @@ sudo useradd -r -s /usr/sbin/nologin -c "Cuenta de servicio" servicioapp
 
 Con `-r` el sistema le asigna un UID bajo 1000 sin salir de la lista de UIDs reservados. Esas cuentas se identifican en `/etc/passwd` con nombres como `_apt` o `www-data`.
 
-### 4.6. Fijar la caducidad y cambiar el directorio personal
+### 4.7. Fijar la caducidad y cambiar el directorio personal
 
 Las políticas de contraseña se controlan con `chage`. En este ejemplo la clave de `pedro` caduca a los 90 días y se avisa 7 días antes:
 
@@ -208,7 +221,7 @@ Si más adelante cambian el nombre o los apellidos de la persona, se cambia tamb
 sudo usermod -d /home/pedro.martinez -m pedro
 ```
 
-### 4.7. Configuración de límites globales en /etc/login.defs
+### 4.8. Configuración de límites globales en /etc/login.defs
 
 Aunque el comando `chage` permite definir la caducidad de contraseñas de forma individual por usuario, Linux cuenta con un archivo de configuración global donde se definen los valores por defecto para cualquier cuenta nueva que se cree en el sistema: `/etc/login.defs`.
 
@@ -228,7 +241,7 @@ grep -E '^PASS_' /etc/login.defs
 
 > **Nota:** Modificar estos valores solo afectará a los usuarios creados **después** del cambio. Los usuarios ya existentes mantendrán sus límites a menos que se actualicen manualmente con `chage`.
 
-### 4.8. Comprobar y bloquear la cuenta
+### 4.9. Comprobar y bloquear la cuenta
 
 Antes de dar por buena una cuenta, conviene probar que funciona de verdad:
 
@@ -256,7 +269,7 @@ Y para consultar de un vistazo toda la política de seguridad de la cuenta:
 sudo grep "^pedro" /etc/shadow
 ```
 
-### 4.9. Eliminar la cuenta
+### 4.10. Eliminar la cuenta
 
 Cuando ya no hay nada que recuperar, se elimina la cuenta. Aquí se ve la diferencia entre las dos formas de borrarla:
 
