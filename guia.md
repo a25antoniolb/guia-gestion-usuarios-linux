@@ -36,10 +36,13 @@ El procedimiento completo, en orden, es el siguiente; cada paso tiene su propio 
 1. Consultar el estado inicial del sistema.
 2. Crear el usuario con `useradd`.
 3. Establecer su contraseña con `passwd`.
-4. Añadirlo a los grupos que necesite con `groupadd` y `usermod`.
-5. Crear la *cuenta de servicio* del programa que lo precise.
-6. Fijar la caducidad de la contraseña con `chage`. 7. Comprobar la cuenta y revocarla con `passwd -l` si deja de ser necesaria.
-8. Eliminar la cuenta con `userdel -r` cuando ya no haga falta.
+4. Gestionar de forma avanzada los estados de clave con modificadores de `passwd`.
+5. Añadirlo a los grupos que necesite con `groupadd` y `usermod`.
+6. Crear la *cuenta de servicio* del programa que lo precise.
+7. Fijar la caducidad de la contraseña y cambiar el directorio personal con `chage` y `usermod`.
+8. Configurar límites globales del sistema en `/etc/login.defs`.
+9. Comprobar la cuenta y revocarla con `passwd -l` si deja de ser necesaria.
+10. Eliminar la cuenta con `userdel -r` cuando ya no haga falta.
 
 ---
 
