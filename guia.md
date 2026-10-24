@@ -14,8 +14,9 @@ Guía práctica para administrar las cuentas de usuario de un sistema Linux: cre
   - [4.4. Añadir el usuario a grupos](#44-añadir-el-usuario-a-grupos)
   - [4.5. Crear una cuenta de servicio](#45-crear-una-cuenta-de-servicio)
   - [4.6. Fijar la caducidad y cambiar el directorio personal](#46-fijar-la-caducidad-y-cambiar-el-directorio-personal)
-  - [4.7. Comprobar y bloquear la cuenta](#47-comprobar-y-bloquear-la-cuenta)
-  - [4.8. Eliminar la cuenta](#48-eliminar-la-cuenta)
+  - [4.7. Configuración de límites globales en /etc/login.defs](#47-configuración-de-límites-globales-en-etclogindefs)
+  - [4.8. Comprobar y bloquear la cuenta](#48-comprobar-y-bloquear-la-cuenta)
+  - [4.9. Eliminar la cuenta](#49-eliminar-la-cuenta)
 - [5. Comprobación final](#5-comprobación-final)
 - [6. Resolución de problemas](#6-resolución-de-problemas)
 - [7. Resumen de comandos](#7-resumen-de-comandos)
@@ -207,7 +208,27 @@ Si más adelante cambian el nombre o los apellidos de la persona, se cambia tamb
 sudo usermod -d /home/pedro.martinez -m pedro
 ```
 
-### 4.7. Comprobar y bloquear la cuenta
+### 4.7. Configuración de límites globales en /etc/login.defs
+
+Aunque el comando `chage` permite definir la caducidad de contraseñas de forma individual por usuario, Linux cuenta con un archivo de configuración global donde se definen los valores por defecto para cualquier cuenta nueva que se cree en el sistema: `/etc/login.defs`.
+
+Los parámetros más importantes dentro de este archivo que afectan a la gestión de usuarios son:
+
+* **`PASS_MAX_DAYS`**: Número máximo de días que una contraseña es válida.
+* **`PASS_MIN_DAYS`**: Número mínimo de días permitido entre cambios de contraseña.
+* **`PASS_WARN_AGE`**: Días de aviso previos antes de que expire la clave.
+* **`UID_MIN` y `UID_MAX`**: Rango de IDs que se asignarán a los usuarios normales (por defecto a partir de 1000 en Ubuntu).
+
+Para consultar estos valores directos del sistema sin los comentarios del archivo, podemos filtrar el documento con `grep`:
+
+```bash
+# Filtrar las directivas activas de contraseñas en la configuración global
+grep -E '^PASS_' /etc/login.defs
+```
+
+> **Nota:** Modificar estos valores solo afectará a los usuarios creados **después** del cambio. Los usuarios ya existentes mantendrán sus límites a menos que se actualicen manualmente con `chage`.
+
+### 4.8. Comprobar y bloquear la cuenta
 
 Antes de dar por buena una cuenta, conviene probar que funciona de verdad:
 
@@ -235,7 +256,7 @@ Y para consultar de un vistazo toda la política de seguridad de la cuenta:
 sudo grep "^pedro" /etc/shadow
 ```
 
-### 4.8. Eliminar la cuenta
+### 4.9. Eliminar la cuenta
 
 Cuando ya no hay nada que recuperar, se elimina la cuenta. Aquí se ve la diferencia entre las dos formas de borrarla:
 
