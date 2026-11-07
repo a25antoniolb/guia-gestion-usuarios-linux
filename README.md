@@ -22,6 +22,7 @@ Guía práctica para administrar las cuentas de usuario de un sistema Linux: cre
 - [6. Resolución de problemas](#6-resolución-de-problemas)
 - [7. Resumen de comandos](#7-resumen-de-comandos)
 - [8. Referencias](#8-referencias)
+- [9. Información del proyecto](#9-información-del-proyecto)
 
 ---
 
@@ -375,3 +376,8 @@ sudo usermod -aG sudo pedro
 - [useradd](https://manpages.ubuntu.com/manpages/resolute/en/man8/useradd.8.html): todas las opciones de creación de cuentas.
 - [usermod](https://manpages.ubuntu.com/manpages/resolute/en/man8/usermod.8.html): todas las opciones de modificación de cuentas.
 - [chage](https://manpages.ubuntu.com/manpages/resolute/en/man1/chage.1.html): gestión del caducidad de contraseñas y cuentas.
+
+---
+
+## 9. Información del proyecto
+Esta documentación se ha elaborado utilizando Markdown. El control de versiones se realiza mediante Git y el repositorio remoto se encuentra alojado en GitHub.
