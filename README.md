@@ -23,6 +23,7 @@ Guía práctica para administrar las cuentas de usuario de un sistema Linux: cre
 - [7. Resumen de comandos](#7-resumen-de-comandos)
 - [8. Referencias](#8-referencias)
 - [9. Información del proyecto](#9-información-del-proyecto)
+- [10. Próximas mejoras](#10-próximas-mejoras)
 
 ---
 
@@ -381,3 +382,10 @@ sudo usermod -aG sudo pedro
 
 ## 9. Información del proyecto
 Esta documentación se ha elaborado utilizando Markdown. El control de versiones se realiza mediante Git y el repositorio remoto se encuentra alojado en GitHub.
+
+---
+
+## 10. Próximas mejoras
+- Explicar cómo generar pares de claves criptográficas y deshabilitar el acceso por contraseña para mejorar la seguridad en los inicios de sesión.
+- Detallar la centralización de cuentas mediante LDAP o SSSD en lugar de depender exclusivamente de los ficheros locales del sistema.
+- Explicar la integración de políticas de seguridad avanzadas mediante PAM (Pluggable Authentication Modules) para establecer límites de intentos fallidos de inicio de sesión y restricciones horarias.
