@@ -19,11 +19,12 @@ Guía práctica para administrar las cuentas de usuario de un sistema Linux: cre
   - [4.9. Comprobar y bloquear la cuenta](#49-comprobar-y-bloquear-la-cuenta)
   - [4.10. Eliminar la cuenta](#410-eliminar-la-cuenta)
 - [5. Comprobación final](#5-comprobación-final)
-- [6. Resolución de problemas](#6-resolución-de-problemas)
-- [7. Resumen de comandos](#7-resumen-de-comandos)
-- [8. Referencias](#8-referencias)
-- [9. Información del proyecto](#9-información-del-proyecto)
-- [10. Próximas mejoras](#10-próximas-mejoras)
+- [6. Recomendaciones de seguridad](#6-recomendaciones-de-seguridad)
+- [7. Resolución de problemas](#7-resolución-de-problemas)
+- [8. Resumen de comandos](#8-resumen-de-comandos)
+- [9. Referencias](#9-referencias)
+- [10. Información del proyecto](#10-información-del-proyecto)
+- [11. Próximas mejoras](#11-próximas-mejoras)
 
 ---
 
@@ -312,7 +313,18 @@ Si las seis filas dan el resultado esperado, la cuenta está lista para usarse.
 
 ---
 
-## 6. Resolución de problemas
+## 6. Recomendaciones de seguridad
+
+Para mantener la integridad y seguridad del sistema al administrar cuentas de usuario en Linux, se recomienda aplicar las siguientes buenas prácticas:
+
+- **Aplicar el principio de mínimo privilegio:** Evita utilizar la cuenta `root` de forma habitual y concede permisos administrativos (`sudo`) únicamente a los usuarios que realmente los necesiten. Asimismo, asigna siempre el shell `/usr/sbin/nologin` a las cuentas de servicio para impedir inicios de sesión interactivos.
+- **Imponer políticas de contraseñas robustas y caducidad:** Configura tiempos máximos de validez mediante `chage` o `/etc/login.defs` (`PASS_MAX_DAYS`), obliga al cambio de clave en el primer acceso con `passwd -e` y evita dejar cuentas sin contraseña (`passwd -d`) en entornos de producción.
+- **No editar manualmente los ficheros de cuentas del sistema:** Utiliza siempre comandos oficiales (`useradd`, `usermod`, `userdel`, `passwd`) en lugar de modificar directamente `/etc/passwd`, `/etc/shadow` o `/etc/group`, evitando errores de sintaxis o permisos inseguros que puedan comprometer el acceso al sistema.
+- **Bloquear cuentas antes de eliminarlas:** Cuando un usuario deje de necesitar acceso, bloquea primero su cuenta con `passwd -l` para conservar sus archivos y registros de auditoría durante un periodo prudencial antes de proceder al borrado definitivo con `userdel -r`.
+
+---
+
+## 7. Resolución de problemas
 
 ### El usuario no aparece en los grupos nuevos
 
@@ -350,7 +362,7 @@ sudo usermod -aG sudo pedro
 
 ---
 
-## 7. Resumen de comandos
+## 8. Resumen de comandos
 
 
 | Comando | Función | Ejemplo |
@@ -370,7 +382,7 @@ sudo usermod -aG sudo pedro
 
 ---
 
-## 8. Referencias
+## 9. Referencias
 
 - [Ubuntu — *User management*](https://documentation.ubuntu.com/server/how-to/security/user-management): guía oficial de Ubuntu sobre cuentas locales, grupos y permisos.
 - [passwd](https://manpages.ubuntu.com/manpages/resolute/en/man5/passwd.5.html): formato de los archivos `/etc/passwd`, `/etc/shadow` y `/etc/group`.
@@ -380,12 +392,12 @@ sudo usermod -aG sudo pedro
 
 ---
 
-## 9. Información del proyecto
+## 10. Información del proyecto
 Esta documentación se ha elaborado utilizando Markdown. El control de versiones se realiza mediante Git y el repositorio remoto se encuentra alojado en GitHub.
 
 ---
 
-## 10. Próximas mejoras
+## 11. Próximas mejoras
 - Explicar cómo generar pares de claves criptográficas y deshabilitar el acceso por contraseña para mejorar la seguridad en los inicios de sesión.
 - Detallar la centralización de cuentas mediante LDAP o SSSD en lugar de depender exclusivamente de los ficheros locales del sistema.
 - Explicar la integración de políticas de seguridad avanzadas mediante PAM (Pluggable Authentication Modules) para establecer límites de intentos fallidos de inicio de sesión y restricciones horarias.
